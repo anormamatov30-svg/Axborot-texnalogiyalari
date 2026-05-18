@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BDTU — Axborot Texnologiyalari</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:      #0a0e1a;
+  --surface: #111827;
+  --card:    #161d2e;
+  --border:  rgba(255,255,255,0.07);
+  --accent:  #e63946;
+  --accent2: #ff6b6b;
+  --green:   #00c896;
+  --green2:  #00e6a8;
+  --gold:    #f4b942;
+  --text:    #f0f4ff;
+  --muted:   #7a8aaa;
+  --glow-r:  rgba(230,57,70,0.25);
+  --glow-g:  rgba(0,200,150,0.25);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
+body::before,body::after{content:'';position:fixed;border-radius:50%;filter:blur(120px);pointer-events:none;z-index:0}
+body::before{width:600px;height:600px;background:radial-gradient(circle,rgba(230,57,70,0.12),transparent 70%);top:-200px;left:-200px}
+body::after{width:500px;height:500px;background:radial-gradient(circle,rgba(0,200,150,0.10),transparent 70%);bottom:-150px;right:-150px}
+
+/* HEADER */
+.header{position:relative;z-index:10;text-align:center;padding:42px 24px 32px;border-bottom:1px solid var(--border);background:linear-gradient(180deg,rgba(230,57,70,0.06),transparent)}
+.logo-row{display:inline-flex;align-items:center;gap:14px;margin-bottom:10px}
+.logo-badge{width:52px;height:52px;background:linear-gradient(135deg,var(--accent),#b71c1c);border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:1.4rem;box-shadow:0 0 30px var(--glow-r),0 4px 16px rgba(0,0,0,0.4)}
+.header h1{font-family:'Syne',sans-serif;font-size:3rem;font-weight:800;letter-spacing:6px;background:linear-gradient(135deg,#fff 30%,var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.header-sub{font-size:.95rem;color:var(--muted);letter-spacing:2px;text-transform:uppercase;margin-top:6px}
+.header-author{display:inline-block;margin-top:12px;font-size:.78rem;color:var(--muted);border:1px solid var(--border);border-radius:20px;padding:4px 14px;letter-spacing:1px}
+
+/* SCREENS */
+.screen{position:relative;z-index:5;max-width:700px;margin:0 auto;padding:40px 20px 60px}
+
+/* VARIANT */
+.screen-title{font-family:'Syne',sans-serif;font-size:1.5rem;font-weight:700;margin-bottom:6px;text-align:center}
+.screen-desc{color:var(--muted);font-size:.88rem;text-align:center;margin-bottom:36px;line-height:1.6}
+.variant-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.vcard{background:var(--card);border:1px solid var(--border);border-radius:20px;padding:28px 20px;cursor:pointer;transition:transform .2s,border-color .2s,box-shadow .2s;text-align:center;position:relative;overflow:hidden}
+.vcard::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(230,57,70,0.08),transparent);opacity:0;transition:opacity .2s}
+.vcard:hover{transform:translateY(-4px);border-color:var(--accent);box-shadow:0 8px 40px var(--glow-r)}
+.vcard:hover::before{opacity:1}
+.vcard-num{font-family:'Syne',sans-serif;font-size:2.2rem;font-weight:800;color:var(--accent);line-height:1;margin-bottom:6px}
+.vcard-label{font-size:.82rem;color:var(--muted);letter-spacing:1px;text-transform:uppercase}
+.vcard-count{display:inline-block;margin-top:10px;background:rgba(230,57,70,0.12);color:var(--accent2);border-radius:8px;padding:3px 10px;font-size:.78rem;font-weight:600}
+
+/* QUIZ */
+#quiz-screen{display:none}
+.quiz-topbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;gap:12px;flex-wrap:wrap}
+.vbadge{font-family:'Syne',sans-serif;font-size:.78rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;background:linear-gradient(135deg,var(--accent),#b71c1c);color:white;border-radius:8px;padding:5px 14px;box-shadow:0 2px 12px var(--glow-r)}
+.score-pill{background:rgba(0,200,150,0.12);border:1px solid rgba(0,200,150,0.2);color:var(--green2);border-radius:20px;padding:5px 14px;font-size:.82rem;font-weight:600}
+.prog-wrap{background:rgba(255,255,255,0.05);border-radius:10px;height:6px;margin-bottom:6px;overflow:hidden}
+.prog-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--gold),var(--green));border-radius:10px;transition:width .5s cubic-bezier(.4,0,.2,1);box-shadow:0 0 12px rgba(230,57,70,0.5)}
+.prog-label{font-size:.75rem;color:var(--muted);margin-bottom:22px}
+
+/* Q CARD */
+.q-card{background:var(--card);border:1px solid var(--border);border-radius:24px;padding:32px 28px 24px;margin-bottom:14px;position:relative;overflow:hidden;animation:fadeUp .35s cubic-bezier(.4,0,.2,1)}
+.q-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--accent),var(--gold),var(--green))}
+@keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+.q-tag{font-size:.7rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--accent);margin-bottom:12px;display:flex;align-items:center;gap:6px}
+.q-tag::before{content:'';width:6px;height:6px;background:var(--accent);border-radius:50%;box-shadow:0 0 8px var(--accent)}
+.q-text{font-family:'Syne',sans-serif;font-size:1.08rem;font-weight:600;line-height:1.55;color:var(--text)}
+
+/* OPTIONS */
+.options{display:flex;flex-direction:column;gap:10px}
+.opt-btn{background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:14px;padding:14px 18px;display:flex;align-items:center;gap:14px;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:.93rem;font-weight:500;color:var(--text);text-align:left;transition:all .18s;position:relative;overflow:hidden}
+.opt-btn:hover:not(:disabled){border-color:rgba(0,200,150,0.4);background:rgba(0,200,150,0.05);transform:translateX(5px);box-shadow:0 4px 20px rgba(0,200,150,0.1)}
+.opt-btn:hover:not(:disabled) .opt-key{background:var(--green);color:#000;box-shadow:0 0 12px var(--glow-g)}
+.opt-key{width:30px;height:30px;min-width:30px;border-radius:8px;background:rgba(255,255,255,0.07);display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-size:.78rem;font-weight:700;transition:all .18s;color:var(--muted)}
+.opt-btn.correct{border-color:var(--green);background:rgba(0,200,150,0.08);color:var(--green2);box-shadow:0 0 20px var(--glow-g)}
+.opt-btn.correct .opt-key{background:var(--green);color:#000;box-shadow:0 0 14px var(--glow-g)}
+.opt-btn.wrong{border-color:var(--accent);background:rgba(230,57,70,0.08);color:var(--accent2);box-shadow:0 0 20px var(--glow-r)}
+.opt-btn.wrong .opt-key{background:var(--accent);color:#fff;box-shadow:0 0 14px var(--glow-r)}
+.opt-btn:disabled{cursor:default;transform:none!important}
+
+/* NEXT BTN */
+.next-btn{display:none;width:100%;padding:16px;background:linear-gradient(135deg,var(--green),#009970);border:none;border-radius:14px;color:#000;font-family:'Syne',sans-serif;font-size:1rem;font-weight:700;letter-spacing:1px;cursor:pointer;margin-top:14px;box-shadow:0 4px 24px var(--glow-g);transition:transform .15s,box-shadow .15s;animation:fadeUp .25s ease}
+.next-btn:hover{transform:translateY(-2px);box-shadow:0 8px 32px var(--glow-g)}
+
+/* RESULT */
+#result-screen{display:none}
+.result-hero{text-align:center;padding:20px 0 30px}
+.result-icon{font-size:5rem;display:block;margin-bottom:14px;animation:pop .5s cubic-bezier(.17,.67,.42,1.4)}
+@keyframes pop{from{transform:scale(0);opacity:0}to{transform:scale(1);opacity:1}}
+.result-title{font-family:'Syne',sans-serif;font-size:1.8rem;font-weight:800;margin-bottom:4px}
+.result-pct{font-family:'Syne',sans-serif;font-size:4.5rem;font-weight:800;line-height:1;margin:10px 0}
+.pct-green{background:linear-gradient(135deg,var(--green),var(--green2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.pct-red{background:linear-gradient(135deg,var(--accent),var(--gold));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.stats-row{display:flex;justify-content:center;gap:14px;margin:24px 0;flex-wrap:wrap}
+.stat-box{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:18px 26px;text-align:center;min-width:100px;flex:1;max-width:140px}
+.stat-num{font-family:'Syne',sans-serif;font-size:2rem;font-weight:800;line-height:1}
+.stat-label{font-size:.75rem;color:var(--muted);margin-top:4px}
+.num-green{color:var(--green)}.num-red{color:var(--accent)}.num-white{color:var(--text)}
+.comment-box{background:linear-gradient(135deg,rgba(244,185,66,0.08),rgba(244,185,66,0.04));border:1px solid rgba(244,185,66,0.2);border-radius:18px;padding:20px 24px;margin:20px 0;font-size:.95rem;line-height:1.65;color:#f0d080;position:relative}
+.comment-box::before{content:'💬';position:absolute;top:-14px;left:20px;font-size:1.4rem;background:var(--bg);padding:0 6px}
+.restart-btn{width:100%;padding:16px;background:linear-gradient(135deg,var(--accent),#b71c1c);border:none;border-radius:14px;color:white;font-family:'Syne',sans-serif;font-size:1rem;font-weight:700;letter-spacing:1px;cursor:pointer;box-shadow:0 4px 24px var(--glow-r);transition:transform .15s,box-shadow .15s;margin-top:8px}
+.restart-btn:hover{transform:translateY(-2px);box-shadow:0 8px 32px var(--glow-r)}
+
+@media(max-width:480px){
+  .header h1{font-size:2.2rem;letter-spacing:4px}
+  .variant-grid{grid-template-columns:1fr}
+  .q-card{padding:22px 18px 18px}
+  .q-text{font-size:.98rem}
+  .result-pct{font-size:3.5rem}
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="logo-row">
+    <div class="logo-badge">🎓</div>
+    <h1>BDTU</h1>
+  </div>
+  <div class="header-sub">Axborot Texnologiyalari · Test Tizimi</div>
+  <div class="header-author">Tuzuvchi: Normamatov A</div>
+</div>
+
+<div id="variant-screen">
+  <div class="screen">
+    <div class="screen-title">Variantni tanlang</div>
+    <div class="screen-desc">Har bir variant tasodifiy tartibda chiqadi.<br>Diqqat bilan o'qib, to'g'ri javobni belgilang.</div>
+    <div class="variant-grid">
+      <div class="vcard" onclick="startVariant(1)"><div class="vcard-num">01</div><div class="vcard-label">Variant</div><div class="vcard-count">25 ta savol</div></div>
+      <div class="vcard" onclick="startVariant(2)"><div class="vcard-num">02</div><div class="vcard-label">Variant</div><div class="vcard-count">25 ta savol</div></div>
+      <div class="vcard" onclick="startVariant(3)"><div class="vcard-num">03</div><div class="vcard-label">Variant</div><div class="vcard-count">25 ta savol</div></div>
+      <div class="vcard" onclick="startVariant(4)"><div class="vcard-num">04</div><div class="vcard-label">Variant</div><div class="vcard-count">21 ta savol</div></div>
+    </div>
+  </div>
+</div>
+
+<div id="quiz-screen">
+  <div class="screen">
+    <div class="quiz-topbar">
+      <div class="vbadge" id="variant-label">1-Variant</div>
+      <div class="score-pill" id="score-live">✦ 0 ta to'g'ri</div>
+    </div>
+    <div class="prog-wrap"><div class="prog-fill" id="prog-fill" style="width:0%"></div></div>
+    <div class="prog-label" id="q-counter">1 / 25</div>
+    <div id="question-area"></div>
+  </div>
+</div>
+
+<div id="result-screen">
+  <div class="screen">
+    <div class="result-hero">
+      <span class="result-icon" id="res-icon">🏆</span>
+      <div class="result-title" id="res-title">Natija</div>
+      <div class="result-pct" id="res-pct">—</div>
+    </div>
+    <div class="stats-row">
+      <div class="stat-box"><div class="stat-num num-green" id="res-correct">0</div><div class="stat-label">✅ To'g'ri</div></div>
+      <div class="stat-box"><div class="stat-num num-red" id="res-wrong">0</div><div class="stat-label">❌ Noto'g'ri</div></div>
+      <div class="stat-box"><div class="stat-num num-white" id="res-total">0</div><div class="stat-label">📋 Jami</div></div>
+    </div>
+    <div class="comment-box" id="comment-box"></div>
+    <button class="restart-btn" onclick="restart()">↩ Boshidan boshlash</button>
+  </div>
+</div>
+
+<script>
+const allQuestions=[
+  {q:"Texnologiyani ta'riflashda qaysi jarayon nazarda tutiladi?",correct:"Xom ashyo yoki ma'lumotni qayta ishlab, tayyor natijaga olib kelish jarayoni",wrong:["Ma'lumotni shunchaki ko'chirish jarayoni","Asbob-uskunalarni saqlash jarayoni","Foydalanuvchi bilan muloqot jarayoni"]},
+  {q:"Axborot texnologiyasining asosiy maqsadi nima?",correct:"Axborotni yig'ish, saqlash, qayta ishlash, uzatish va undan samarali foydalanishni ta'minlash",wrong:["Faqat axborotni chop etish","Foydalanuvchi interfeysini sozlash","Kompyuter qurilmalarini ta'mirlash"]},
+  {q:"Axborot texnologiyalari qaysi muhit bilan bevosita bog'liq?",correct:"Axborot muhiti bilan",wrong:["Tabiiy muhit bilan","Sanoat muhiti bilan","Biologik muhit bilan"]},
+  {q:"O'zbekistonning 2002-yilgi qonuniga ko'ra axborot nima?",correct:"Shaxslar, predmetlar, faktlar, voqealar, hodisalar va jarayonlar to'g'risidagi ma'lumotlar",wrong:["Faqat raqamli ma'lumotlar","Ommaviy axborot vositalari materiallari","Faqat rasmiy hujjatlar"]},
+  {q:"Tizim (sistema) tushunchasiga qanday ta'rif beriladi?",correct:"O'zaro bog'langan elementlar majmui bo'lib, ular bir butun holda muayyan vazifani bajaradi",wrong:["Bitta elementdan iborat qurilma","Tarmoqqa ulangan kompyuterlar to'plami","Faqat dasturiy ta'minotning qismi"]},
+  {q:"Axborot tizimlarining qanday turlari mavjud?",correct:"Qo'lda ishlovchi, avtomatlashtirilgan va avtomatik axborot tizimlari",wrong:["Analog va raqamli tizimlar","Faqat shaxsiy va korporativ tizimlar","Ochiq va yopiq tizimlar"]},
+  {q:"Dastlabki axborot tizimlari qachon paydo bo'lgan?",correct:"XX asrning 50-60-yillarida, EHMlardan amaliy foydalanish boshlanganda",wrong:["XIX asrning oxirida","XX asrning 80-yillarida","XXI asrning boshida"]},
+  {q:"Axborot tizimining matematik ta'minoti nima?",correct:"Masalalarni yechish uchun qo'llaniladigan matematik usullar, modellar va algoritmlar majmui",wrong:["Kompyuter tarmoq uskunalari","Foydalanuvchi ma'lumotlari bazasi","Operatsion tizim yadrosining kodi"]},
+  {q:"Boshqarishning asosiy tamoyili qaysi hisoblanadi?",correct:"Teskari aloqa tamoyili",wrong:["Ochiq aloqa tamoyili","Oldindan prognozlash tamoyili","Tartibli boshqaruv tamoyili"]},
+  {q:"Boshqaruvning o'rta darajasi nima deb ataladi?",correct:"Taktik boshqaruv darajasi",wrong:["Strategik boshqaruv darajasi","Operativ boshqaruv darajasi","Avtomatik boshqaruv darajasi"]},
+  {q:"Dasturiy ta'minotning asosiy vazifasi nima?",correct:"Kompyuter apparat vositalarini boshqarish va foydalanuvchi masalalarini yechishni ta'minlash",wrong:["Faqat tarmoq ulanishini ta'minlash","Foydalanuvchiga internet kirish imkonini berish","Faqat fayllarni saqlash"]},
+  {q:"Apparat va dasturiy ta'minot bog'lanishi nima?",correct:"Kompyuter tizimi yoki hardware-software integratsiyasi",wrong:["Tarmoq ulanish protokoli","Ma'lumotlar bazasi arxitekturasi","Operatsion tizim interfeysi"]},
+  {q:"Sistemaviy dasturiy ta'minot tarkibiga nima kiradi?",correct:"Operatsion tizimlar, drayverlar, utilitalar va xizmat ko'rsatuvchi dasturlar",wrong:["Faqat ofis ilovalari","Faqat o'yinlar va multimedia dasturlari","Faqat antivirus dasturlari"]},
+  {q:"Operatsion tizimning vazifasi nimadan iborat?",correct:"Kompyuter resurslarini boshqarish, dasturlarni ishga tushirish va foydalanuvchi bilan muloqotni ta'minlash",wrong:["Faqat internet brauzer bo'lib xizmat qilish","Faqat fayllarni o'chirish","Faqat rasm va video ko'rsatish"]},
+  {q:"Drayverlar qanday vazifani bajaruvchi maxsus dasturlar?",correct:"Tashqi qurilmalar ishini boshqaruvchi va OT bilan ular o'rtasida aloqa o'rnatuvchi dasturlar",wrong:["Foydalanuvchi ma'lumotlarini saqlashga mo'ljallangan dasturlar","Internet trafigini kuzatuvchi dasturlar","Faqat printer uchun mo'ljallangan dasturlar"]},
+  {q:"Operatsion tizimlar necha xil interfeysni ta'minlaydi?",correct:"Odatda ikki xil: buyruqli va grafik interfeys",wrong:["Faqat grafik interfeys","Uch xil: matnli, grafik va ovozli","To'rt xil: terminal, grafik, ovoz va sezgi"]},
+  {q:"Ko'p vazifali operatsion tizimga misol?",correct:"Windows, Linux yoki macOS",wrong:["MS-DOS","CP/M","BIOS"]},
+  {q:"Operatsion tizimni yuklash deganda nima tushuniladi?",correct:"OTni tashqi xotiradan tezkor xotiraga olib, ishga tayyorlash jarayoni",wrong:["OTni internetdan yuklab olish jarayoni","OTni yangi versiyaga o'tkazish","OTni boshqa kompyuterga nusxalash"]},
+  {q:"Windows CE operatsion tizimi nima uchun mo'ljallangan?",correct:"Mobil va o'rnatilgan qurilmalar uchun",wrong:["Server kompyuterlari uchun","Superkompyuterlar uchun","Faqat o'yin konsollari uchun"]},
+  {q:"Unix operatsion tizimi yadrosi qaysi tilda yozilgan?",correct:"Asosan C dasturlash tilida",wrong:["Python tilida","Java tilida","Assembly tilida"]},
+  {q:"Matn muharriri va protsessorining asosiy farqi nimada?",correct:"Matn muharriri oddiy tahrirlashga, protsessor esa formatlash va hujjat bezashga xizmat qiladi",wrong:["Matn muharriri tezroq ishlaydi","Farq yo'q, ular bir xil","Matn protsessori faqat matematik hisob qiladi"]},
+  {q:"MS Word dasturi qanday vazifani bajaradi?",correct:"Matnli hujjatlarni yaratish, tahrirlash, formatlash va chop etish",wrong:["Jadvallar bilan ishlash va hisob-kitob qilish","Taqdimot slaydlarini yaratish","Rasmlarni tahrirlash va montaj qilish"]},
+  {q:"Elektron hukumat tizimining asosiy maqsadi nima?",correct:"Davlat xizmatlarini aholiga elektron shaklda tez, qulay va shaffof tarzda taqdim etish",wrong:["Faqat soliq to'lovlarini boshqarish","Faqat harbiy ma'lumotlarni saqlash","Internet tezligini oshirish"]},
+  {q:"Ma'lumotlar bazasi nima deb ataladi?",correct:"Muayyan predmet sohaga oid tartiblangan va o'zaro bog'langan ma'lumotlar to'plami",wrong:["Kompyuter xotirasidagi barcha fayllar","Faqat jadval shaklida saqlangan raqamlar","Internet saytlarining ro'yxati"]},
+  {q:"Ma'lumotlar bazasining iyerarxik modelida elementlar qanday joylashadi?",correct:"Daraxtsimon ko'rinishda — ota-avlod va farzand tugunlar shaklida",wrong:["Tasodifiy tartibda, hech qanday aloqasiz","Faqat gorizontal qatorda","Doirasimon tarzda"]},
+  {q:"Relyatsion ma'lumotlar modeli deganda nima tushuniladi?",correct:"Ma'lumotlar jadval ko'rinishida satr va ustunlar orqali tashkil etilgan model",wrong:["Ma'lumotlar faqat XML formatida saqlanadigan model","Ma'lumotlar daraxt ko'rinishida saqlanadigan model","Ma'lumotlar faqat rasm shaklida saqlanadigan model"]},
+  {q:"Ma'lumotlar bazasida 'maydon' (pole) nima?",correct:"Jadvalning ustuni bo'lib, obyektning bitta xossasini ifodalaydi",wrong:["Jadvalning qatori — bitta yozuv","Butun jadval bilan ma'lumotlar to'plami","Jadvallar orasidagi bog'lanish liniyasi"]},
+  {q:"MBBT (DBMS) tushunchasining kengaytmasi qanday?",correct:"Ma'lumotlar bazasini boshqarish tizimi",wrong:["Maxsus boshqaruv bazasi texnologiyasi","Ma'lumotlarni bloklash va boshqarish tizimi","Milliy baza-bank texnologiya tizimi"]},
+  {q:"MS Access dasturida jadval yaratish usullari qaysilar?",correct:"Konstruktor rejimi va shablon/usta yordamida",wrong:["Faqat CSV fayldan import qilish","Faqat SQL so'rov yozish orqali","Faqat Excel dan nusxa olish orqali"]},
+  {q:"Access dasturida 'kalit maydoni' nima uchun kerak?",correct:"Har bir yozuvni yagona aniqlash va jadvallar orasida bog'lanish o'rnatish uchun",wrong:["Ma'lumotlarni shifrlash uchun","Foydalanuvchi parolini saqlash uchun","Jadvalni bloklash uchun"]},
+  {q:"Accessda 'So'rov' (Zapros) vazifasi nima?",correct:"Kerakli ma'lumotlarni tanlash, saralash, filtrlash va qayta ishlash",wrong:["Ma'lumotlarni faqat chop etish uchun","Yangi foydalanuvchi yaratish uchun","Jadvalni o'chirish uchun"]},
+  {q:"Accessda 'Forma' ob'ekti nima uchun xizmat qiladi?",correct:"Ma'lumotlarni qulay kiritish, ko'rish va tahrirlash uchun",wrong:["Faqat ma'lumotlarni chop etish uchun","Jadvallar orasida bog'lanish o'rnatish uchun","Ma'lumotlar bazasini zaxiralash uchun"]},
+  {q:"Accessda 'Hisobot' (Otchet) nima uchun ishlatiladi?",correct:"Ma'lumotlarni tartibli ko'rinishda chiqarish va chop etish uchun",wrong:["Ma'lumotlarni yangilash uchun","Yangi jadval yaratish uchun","Foydalanuvchi huquqlarini boshqarish uchun"]},
+  {q:"Algoritm tushunchasi kimning nomi bilan bog'liq?",correct:"Muhammad al-Xorazmiy nomi bilan",wrong:["Albert Eynshteyn nomi bilan","Alan Tyuring nomi bilan","Dennis Richi nomi bilan"]},
+  {q:"Algoritmning 'diskretlilik' xossasi nimani bildiradi?",correct:"Algoritm ketma-ket, alohida-alohida qadamlardan iborat ekanini",wrong:["Algoritm cheksiz takrorlanishini","Algoritm faqat bitta masalani yechishini","Algoritmning tez bajarilishini"]},
+  {q:"Algoritmning 'natijaviylik' xossasi nimani anglatadi?",correct:"Algoritm chekli sondagi qadamlardan so'ng aniq natija berishi kerakligini",wrong:["Algoritm har qanday qadamda to'xtashi mumkinligini","Algoritm faqat musbat javob berishini","Algoritmning boshqa tilga tarjima qilinishini"]},
+  {q:"Algoritmni ifodalashning grafik usuli nima deb ataladi?",correct:"Blok-sxema",wrong:["Dendrogram","Flowmap","Gistogramma"]},
+  {q:"C++ dasturining 'main' funksiyasi qanday vazifani bajaradi?",correct:"Dastur bajarilishi aynan shu funksiyadan boshlanadi — u asosiy funksiyadir",wrong:["Ma'lumotlarni chiqarish funksiyasi","Faqat o'zgaruvchilarni e'lon qilish funksiyasi","Kutubxonalarni ulash funksiyasi"]},
+  {q:"C++ tilida '#include' buyrug'ining vazifasi nima?",correct:"Kutubxona sarlavha fayllarini dasturga ulash",wrong:["Dasturni kompilyatsiya qilish","Foydalanuvchi kiritishini kutish","O'zgaruvchilarni xotiradan o'chirish"]},
+  {q:"C++ tilida '\\n' belgisi qanday vazifani bajaradi?",correct:"Kursornni yangi qatorga o'tkazadi",wrong:["Dasturni to'xtatadi","Vergul belgisini ifodalaydi","O'zgaruvchi qiymatini nolga tenglashtiradi"]},
+  {q:"'Model' so'zi lotincha 'modulus' so'zidan olingan bo'lib, nima degani?",correct:"O'lchov, me'yor, namuna yoki nusxa",wrong:["Qoidalar to'plami","Matematik formula","Kompyuter dasturi"]},
+  {q:"Modelning asosiy uchta turi qaysilar?",correct:"Fizik, analog va matematik modellar",wrong:["Raqamli, analog va gibrid modellar","Statik, dinamik va kinetik modellar","Sodda, murakkab va gibrid modellar"]},
+  {q:"Matematik model nima orqali ifodalanadi?",correct:"Formula, tenglama, tengsizlik va matematik munosabatlar orqali",wrong:["Faqat grafik va diagrammalar orqali","Faqat tabiiy til orqali","Faqat jadvallar orqali"]},
+  {q:"Modellashtirishning iqtisodiy samaradorligini oshirishda nima muhim?",correct:"Modelning aniqligi, soddaligi va amaliyotga mosligi",wrong:["Modelning grafik jihati va rangi","Modelning fayl hajmi","Modelni kim yaratganligi"]},
+  {q:"Optimallik kriteriyasi nima uchun xizmat qiladi?",correct:"Eng yaxshi yechimni tanlash mezoni sifatida",wrong:["Eng qimmat yechimni tanlash uchun","Eng eski algoritmni saqlash uchun","Tezkor xotirani bo'shatish uchun"]},
+  {q:"Simpleks usuli qanday masalalarni yechish uchun qo'llaniladi?",correct:"Chiziqli dasturlash masalalarini yechish uchun",wrong:["Tarmoq topologiyasini hisoblash uchun","Ma'lumotlar bazasini optimallashtirish uchun","Grafik tasvirlarni qayta ishlash uchun"]},
+  {q:"Transport masalasining maqsadi nimadan iborat?",correct:"Yuklarni manbalardan iste'molchilarga eng kam xarajat bilan taqsimlash",wrong:["Kompyuter tarmoq paketlarini tez uzatish","Yo'lovchi tashish jadvalini tuzish","Sayt trafikini boshqarish"]},
+  {q:"Kobb-Duglas funksiyasi nimani ifodalaydi?",correct:"Ishlab chiqarish hajmining mehnat va kapitalga bog'liqligini",wrong:["Transport xarajatlarining masofaga bog'liqligini","Kompyuter protsessorining tezligini","Algoritmning vaqt murakkabligini"]},
+  {q:"C++ tilida 'return 0;' buyrug'i nimani anglatadi?",correct:"Dastur muvaffaqiyatli tugaganini bildiradi",wrong:["Dastur xato bilan to'xtaganini bildiradi","Nolni ekranga chiqaradi","Siklni to'xtatadi"]},
+  {q:"Axborot texnologiyasining vositalariga nima kiradi?",correct:"Kompyuterlar, tarmoqlar, dasturlar, ma'lumotlar bazalari va aloqa vositalari",wrong:["Faqat kompyuter va printer","Faqat internet va brauzer","Faqat server va router"]},
+  {q:"Axborot tizimining lingvistik ta'minoti nima?",correct:"Axborot bilan ishlashda qo'llaniladigan til vositalari, terminlar, klassifikatorlar va kodlash tizimlari",wrong:["Foydalanuvchi bilan yozma muloqot tizimi","Tarjima dasturlari to'plami","Tabiiy tillarni o'rgatish kurslari"]},
+  {q:"Teskari aloqa tamoyili boshqaruvda qanday rol o'ynaydi?",correct:"Boshqaruv natijalarini nazorat qilish va kerak bo'lsa tuzatish kiritish imkonini beradi",wrong:["Foydalanuvchiga xabar yuborish imkonini beradi","Tizimni avtomatik o'chirish imkonini beradi","Ma'lumotlarni arxivlash imkonini beradi"]},
+  {q:"Dasturlash texnologiyasining uskunaviy vositalari nima?",correct:"Kompyuter, kiritish-chiqarish qurilmalari, saqlash qurilmalari va tarmoq vositalari",wrong:["Faqat klaviatura va sichqoncha","Faqat monitor va printer","Faqat flashcard va CD-ROM"]},
+  {q:"Operatsion tizimlar qanday turkumlarga bo'linadi?",correct:"Bir vazifali va ko'p vazifali, bir foydalanuvchili va ko'p foydalanuvchili",wrong:["Tezkor va sekin, arzon va qimmat","Eski va yangi, oddiy va murakkab","Faqat server va desktop turlarga"]},
+  {q:"Windows operatsion tizimining asosiy elementi nima?",correct:"Oyna (window)",wrong:["Vazifalar paneli (taskbar)","Ish stoli (desktop)","Boshqaruv paneli (control panel)"]},
+  {q:"Unix operatsion tizimining ustunligi nimada?",correct:"Ko'p foydalanuvchili, barqaror, xavfsiz va ko'p vazifali ekanida",wrong:["Faqat grafik interfeysining chiroyliligi","Bepul bo'lganligi","Faqat mobil qurilmalarga mosligi"]},
+  {q:"Matn protsessori yordamida hosil qilingan hujjat nima deb ataladi?",correct:"Matnli hujjat yoki dokument",wrong:["Fayl arxivi","Ma'lumotlar bazasi yozuvi","Elektron jadval"]},
+  {q:"'Elektron hukumat' tizimi kimlar uchun xizmat qiladi?",correct:"Fuqarolar va yuridik shaxslar uchun davlat xizmatlaridan foydalanish imkonini kengaytiradi",wrong:["Faqat hukumat xodimlari uchun","Faqat xorijiy investorlar uchun","Faqat harbiy xizmatchilar uchun"]},
+  {q:"Ma'lumotlar bazasini yaratishda birinchi muhim shart nima?",correct:"Predmet sohani tahlil qilish va qanday ma'lumotlar kerakligini aniqlash",wrong:["Darhol jadval yaratishni boshlash","Eng qimmat MBBT dasturini sotib olish","Foydalanuvchi parolini o'rnatish"]},
+  {q:"Jadvalning qatorlari ma'lumotlar bazasida nima deb ataladi?",correct:"Yozuvlar",wrong:["Maydonlar","Ustunlar","Atributlar"]},
+  {q:"MS Accessda 'Konstruktor' rejimi nima uchun kerak?",correct:"Jadval, so'rov, forma va boshqa obyektlarning tuzilmasini qo'lda sozlash uchun",wrong:["Faqat ma'lumot kiritish uchun","Faqat hisobotni chop etish uchun","Faqat grafik interfeys yaratish uchun"]},
+  {q:"Accessda 'So'rov' yaratishning 'Konstruktor' usuli nima?",correct:"Maydonlar, shartlar va hisoblashlarni foydalanuvchi o'zi belgilab so'rov tuzishi usuli",wrong:["Tayyor shablondan foydalanish usuli","SQL faylni import qilish usuli","Avtomatik hisobot generatsiya usuli"]},
+  {q:"Accessda 'Filtr' buyrug'ining asosiy vazifasi nima?",correct:"Kerakli shartga mos yozuvlarni ajratib ko'rsatish",wrong:["Jadvalni tartiblash","Barcha ma'lumotlarni o'chirish","Ma'lumotlarni shifrlash"]},
+  {q:"Algoritmning 'ommaviylik' xossasi nimani anglatadi?",correct:"Algoritm bir turdagi ko'plab masalalarga tatbiq etilishi mumkinligini",wrong:["Algoritm ommaga tanilganligini","Algoritm internetda joylashtirilganligini","Algoritmning qisqa va ixchamligini"]},
+  {q:"Blok-sxemada parallelogramm shakli nima uchun xizmat qiladi?",correct:"Kiritish va chiqarish amallarini ifodalaydi",wrong:["Shart tekshiruvini ifodalaydi","Siklni ifodalaydi","Dastur boshlanishini ifodalaydi"]},
+  {q:"C++ tilida o'zgaruvchilarni e'lon qilish nima uchun kerak?",correct:"Ma'lumotlarni xotirada saqlash uchun nom va tur berish kerak bo'ladi",wrong:["Foydalanuvchiga xabar yuborish uchun","Kompilyatorni ishga tushirish uchun","Dasturni tezlashtirish uchun"]},
+  {q:"Fizik modellashtirishning geometrik modellashtirishdan asosiy farqi nima?",correct:"Fizik model obyektning fizik xossalarini ham aks ettiradi, geometrik model esa shakl va o'lchamni ko'rsatadi",wrong:["Fizik model faqat raqamli shaklda bo'ladi","Geometrik model aniqroq natija beradi","Ular o'rtasida hech qanday farq yo'q"]},
+  {q:"Iqtisodiy-matematik modellashtirishda 'o'zgaruvchilar' nima?",correct:"Modeldagi miqdoriy ko'rsatkichlar bo'lib, qiymati o'zgarishi mumkin bo'lgan kattaliklar",wrong:["Faqat konstanta qiymatlar","Dastur kodi satrlari","Foydalanuvchi ismlari"]},
+  {q:"Simpleks jadvalida 'indeks qatori' nima uchun xizmat qiladi?",correct:"Yechimning optimal yoki nooptimal ekanini aniqlash uchun",wrong:["Jadval tartib raqamlarini ko'rsatish uchun","Barcha yechimlarni saqlash uchun","Natijalarni chop etish uchun"]},
+  {q:"Transport masalasida 'yopiq model' nima degani?",correct:"Jami taklif miqdori jami talab miqdoriga teng bo'lgan holat",wrong:["Transport yo'nalishi yopiq bo'lgan holat","Ma'lumotlar bazasi o'chirilgan holat","Tarmoq ulanishi uzilgan holat"]},
+  {q:"Cobb-Douglas funksiyasida 'A' parametri nimani bildiradi?",correct:"Texnologik daraja yoki proporsionallik koeffitsientini",wrong:["Ishchi kuchining miqdorini","Kapital hajmini","Daromad soliq stavkasini"]},
+  {q:"Accessda 'Makros' ob'ekti qanday vazifani bajaradi?",correct:"Buyruqlar ketma-ketligini avtomatik bajarish vazifasini",wrong:["Faqat ma'lumotlarni chop etish","Foydalanuvchi parolini o'rnatish","Jadvallarni birlashtirish"]},
+  {q:"C++ tilida 'cout' buyrug'ining vazifasi nima?",correct:"Ma'lumotni ekranga chiqarish uchun ishlatiladi",wrong:["Ma'lumotni faylga yozish uchun","Kiritishni kutish uchun","Siklni boshlash uchun"]},
+  {q:"Axborot texnologiyalarining evolyutsion bosqichlari nima bilan bog'liq?",correct:"Hisoblash texnikasi, aloqa vositalari va dasturiy vositalarning rivojlanishi bilan",wrong:["Faqat internet tezligining oshishi bilan","Faqat kompyuter ekranining kattalashishi bilan","Faqat klaviatura va sichqonchaning rivojlanishi bilan"]},
+  {q:"Axborot tizimining 'huquqiy ta'minoti' nima?",correct:"Axborot tizimi faoliyatini tartibga soluvchi qonunlar, me'yorlar va hujjatlar majmui",wrong:["Foydalanuvchi parollari va kirishni cheklash tizimi","Antivirus dasturlar to'plami","Tizim ma'muriga berilgan huquqlar"]},
+  {q:"Boshqaruv tizimida 'boshqaruv sub'ekti' kim yoki nima?",correct:"Boshqaruvchi tomon — qaror qabul qiluvchi shaxs yoki organ",wrong:["Boshqarilayotgan ob'ekt","Ma'lumotlar bazasi","Kompyuter tarmoq serveri"]},
+  {q:"Dasturiy interfeys deganda nima tushuniladi?",correct:"Dasturlar yoki foydalanuvchi bilan dastur o'rtasidagi o'zaro aloqa vositasi",wrong:["Faqat ekrandagi tugmalar to'plami","Kompyuter va printer o'rtasidagi kabel","Foydalanuvchi manuali va yordam tizimi"]},
+  {q:"Amaliy dasturiy ta'minot (Application software) nima?",correct:"Foydalanuvchining aniq amaliy masalalarini bajarishga mo'ljallangan dasturlar majmui",wrong:["Operatsion tizimning tarkibiy qismi","Kompyuter drayverlarining to'plami","Server xizmatlari va protokollar"]},
+  {q:"Antivirus dasturlari dasturiy ta'minotning qaysi turiga kiradi?",correct:"Xizmat ko'rsatuvchi yoki utilita dasturlar turiga",wrong:["Amaliy dasturlar turiga","Tizim drayverlariga","Ko'ngilochar dasturlarga"]},
+  {q:"Windows operatsion tizimida 'fayl' nima?",correct:"Nomga ega bo'lgan va xotirada saqlanadigan ma'lumotlar birligi",wrong:["Internet sahifasi","Kompyuter qismi","Tarmoq protokoli"]},
+  {q:"Grafik interfeysli operatsion tizimlarning afzalligi nimada?",correct:"Foydalanishga qulayligi, ko'rgazmaliligi va buyruqlarni tez bajarish imkoniyatida",wrong:["Faqat xotira iste'molining kamligi","Faqat tezroq ishlashi","Faqat arzonligi"]},
+  {q:"Unix operatsion tizimi qachon va qayerda yaratilgan?",correct:"1969-yilda AQShdagi Bell Laboratoriesda",wrong:["1981-yilda Microsoft kompaniyasida","1975-yilda IBM korporatsiyasida","1990-yilda Finlyandiyada"]},
+  {q:"Operatsion tizimning 'bashorat' xususiyati nimani anglatadi?",correct:"Tizimning foydalanuvchi buyruqlari va jarayonlar oqimini oldindan samarali rejalashtira olishini",wrong:["Tizimning kelajakdagi versiyasini prognoz qila olishini","Foydalanuvchi parolini eslab qola olishini","Kompyuterni virusdan himoya qila olishini"]},
+  {q:"Matn protsessorlarida 'shrift' nima uchun o'zgartiriladi?",correct:"Matnning ko'rinishi, o'qilishi va dizaynini yaxshilash uchun",wrong:["Faylning hajmini kamaytirish uchun","Kompyuter tezligini oshirish uchun","Hujjatni shifrlash uchun"]},
+  {q:"C++ algoritmik tilida kiritish operatori qaysi?",correct:"cin >>",wrong:["cout <<","input()","scanf();"]},
+  {q:"C++ algoritmik tilida shart operatori qaysi?",correct:"if ... else",wrong:["for ... do","while ... then","check ... run"]},
+  {q:"C++ algoritmik tilida parametrli takrorlash operatori qaysi?",correct:"for",wrong:["repeat","loop","cycle"]},
+  {q:"C++ algoritmik tilida chiqarish operatori qaysi?",correct:"cout <<",wrong:["cin >>","print()","output()"]},
+  {q:"C++ algoritmik tilida sarlavha qismiga nima kiradi?",correct:"#include <iostream> va zarur bo'lsa using namespace std;",wrong:["main() funksiyasi","return 0; buyrug'i","o'zgaruvchilar e'lon qismi"]},
+  {q:"C++ algoritmik tilida funksiyalarni e'lon qilish qanday?",correct:"Funksiya prototipi, masalan: int summa(int a, int b);",wrong:["void main() { }","#include <function>","declare int summa;"]},
+  {q:"C++ algoritmik tilida haqiqiy o'zgaruvchini qanday e'lon qilinadi?",correct:"float x; yoki double x;",wrong:["int x;","char x;","bool x;"]},
+  {q:"C++ algoritmik tilida matematik ifodalar sarlavhasi qaysi?",correct:"#include <cmath>",wrong:["#include <math>","#include <algebra>","#include <numbers>"]},
+  {q:"C++ algoritmik tilida bir o'lchovli massivni qanday e'lon qilish mumkin?",correct:"int a[10];",wrong:["int a = [10]","array a(10);","list<int> a[10];"]},
+  {q:"C++ algoritmik tilida ikki o'lchovli massivni qanday e'lon qilish mumkin?",correct:"int a[3][4];",wrong:["int a[3,4];","matrix a(3,4);","int a[3] = [4];"]},
+  {q:"C++ algoritmik tilida grafik ma'lumotlar bilan ishlash sarlavhasi qaysi?",correct:"#include <graphics.h>",wrong:["#include <visual.h>","#include <draw.h>","#include <image.h>"]},
+];
+
+const comments=[
+  ["🏆 Zo'r! Siz kompyuter fanlari bo'yicha iste'dodli mutaxassissiz! Elon Musk ham telefon qilishi mumkin...","🥇 Ajoyib! O'qituvchi sizdan ekzamen namunasin so'rashi mumkin!","🎓 Mukammal! BDTU sizni mag'rur his qilmoqda!"],
+  ["👏 Yaxshi! Yana bir oz mashq qilsangiz, kompyuteringiz sizdan maslahat so'raydi!","💪 Barakalla! Ko'pchilik shu ballga ham yetib bormaydi!","📚 Zo'r harakat! Siz to'g'ri yo'ldasiz, davom eting!"],
+  ["📖 Yaxshi urinish! Kitob sizni kutmoqda — qochib yurma undan 😄","🤔 Normal. Kompyuteringiz ham xuddi shunday deb o'ylaydi...","📝 Xavotir olmang! Eynshteyn ham birinchi marta yiqilgan!"],
+  ["😅 Keyingi safar testdan oldin o'yin o'rniga o'qing! 😂","💻 Kompyuteringiz: 'Iltimos, meni qayta o'rganishga harakat qiling' 😄","🎮 Hali vaqt bor! Kitob sizni yaxshi ko'radi — faqat oching!"],
+];
+
+function shuffle(a){let b=[...a];for(let i=b.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[b[i],b[j]]=[b[j],b[i]]}return b}
+
+let questions=[],currentIndex=0,score=0,answered=false;
+
+function startVariant(v){
+  document.getElementById('variant-screen').style.display='none';
+  document.getElementById('quiz-screen').style.display='block';
+  document.getElementById('variant-label').textContent=v+'-Variant';
+  const s=[0,25,50,75],e=[25,50,75,96];
+  questions=shuffle(allQuestions.slice(s[v-1],e[v-1]));
+  currentIndex=0;score=0;showQuestion();
+}
+
+function showQuestion(){
+  answered=false;
+  const tot=questions.length,qi=currentIndex;
+  document.getElementById('q-counter').textContent=`${qi+1} / ${tot}`;
+  document.getElementById('score-live').textContent=`✦ ${score} ta to'g'ri`;
+  document.getElementById('prog-fill').style.width=((qi/tot)*100)+'%';
+  const qd=questions[qi],opts=shuffle([qd.correct,...qd.wrong]),L=['A','B','C','D'];
+  document.getElementById('question-area').innerHTML=`
+    <div class="q-card">
+      <div class="q-tag">Savol ${qi+1}</div>
+      <div class="q-text">${qd.q}</div>
+    </div>
+    <div class="options">
+      ${opts.map((o,i)=>`<button class="opt-btn" onclick="pick(this,\`${o.replace(/`/g,"\\`")}\`,\`${qd.correct.replace(/`/g,"\\`")}\`)"><span class="opt-key">${L[i]}</span><span>${o}</span></button>`).join('')}
+    </div>
+    <button class="next-btn" id="next-btn" onclick="nextQ()">${qi+1<tot?'Keyingi savol →':"Natijani ko'rish ✦"}</button>`;
+}
+
+function pick(btn,chosen,correct){
+  if(answered)return;answered=true;
+  document.querySelectorAll('.opt-btn').forEach(b=>{
+    b.disabled=true;
+    if(b.querySelector('span:last-child').textContent===correct)b.classList.add('correct');
+  });
+  if(chosen===correct){btn.classList.add('correct');score++;}
+  else btn.classList.add('wrong');
+  document.getElementById('score-live').textContent=`✦ ${score} ta to'g'ri`;
+  document.getElementById('next-btn').style.display='block';
+}
+
+function nextQ(){currentIndex++;currentIndex<questions.length?showQuestion():showResult();}
+
+function showResult(){
+  document.getElementById('quiz-screen').style.display='none';
+  document.getElementById('result-screen').style.display='block';
+  const tot=questions.length,pct=Math.round((score/tot)*100);
+  document.getElementById('res-correct').textContent=score;
+  document.getElementById('res-wrong').textContent=tot-score;
+  document.getElementById('res-total').textContent=tot;
+  document.getElementById('res-pct').textContent=pct+'%';
+  let icon,title,ci,cls;
+  if(pct>=90){icon='🏆';title='Mukammal natija!';ci=0;cls='pct-green';}
+  else if(pct>=70){icon='🎖️';title='Yaxshi natija!';ci=1;cls='pct-green';}
+  else if(pct>=50){icon='📚';title="O'rtacha natija";ci=2;cls='pct-red';}
+  else{icon='💡';title='Yana harakat qiling!';ci=3;cls='pct-red';}
+  document.getElementById('res-icon').textContent=icon;
+  document.getElementById('res-title').textContent=title;
+  document.getElementById('res-pct').className='result-pct '+cls;
+  document.getElementById('comment-box').textContent=comments[ci][Math.floor(Math.random()*3)];
+}
+
+function restart(){
+  document.getElementById('result-screen').style.display='none';
+  document.getElementById('variant-screen').style.display='block';
+}
+</script>
+</body>
+</html>
